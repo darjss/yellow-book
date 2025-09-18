@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@yellow-book/api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,6 +17,7 @@
   "devDependencies": {
     "typescript": "^5",
     "@types/node": "^20",
-    "@types/react": "^19"
+    "@types/react": "^19",
+    "@types/minimatch": "^6.0.0"
   }
 }

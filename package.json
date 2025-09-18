@@ -25,6 +25,8 @@
     "@swc/helpers": "~0.5.11",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "@types/node": "20.17.21",
+    "@types/minimatch": "6.0.0",
     "autoprefixer": "10.4.13",
     "eslint": "^9.8.0",
     "eslint-config-next": "^15.2.4",

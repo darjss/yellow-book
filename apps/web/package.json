@@ -1,5 +1,5 @@
 {
-  "name": "@yellow-book/yellow-book",
+  "name": "@yellow-book/web",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
