@@ -2,7 +2,20 @@
   "name": "@yellow-book/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "typecheck": "nx typecheck",
+    "lint": "nx lint",
+    "dev:api": "nx dev @yellow-book/api",
+    "dev:web": "nx dev @yellow-book/web",
+    "dev": "nx run-many --target=dev --projects=@yellow-book/api,@yellow-book/web --parallel",
+    "build:api": "nx build @yellow-book/api",
+    "build:web": "nx build @yellow-book/web",
+    "build": "nx run-many --target=build --projects=@yellow-book/api,@yellow-book/web --parallel",
+    "start:api": "nx start @yellow-book/api",
+    "start:web": "nx start @yellow-book/web",
+    "clean": "nx reset",
+    "clean:deps": "rm -rf node_modules apps/*/node_modules && bun install"
+  },
   "private": true,
   "dependencies": {
     "next": "~15.2.4",
