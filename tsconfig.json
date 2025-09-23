@@ -4,7 +4,10 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/yellow-book"
+      "path": "./apps/web"
+    },
+    {
+      "path": "./apps/api"
     }
   ]
 }
