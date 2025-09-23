@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react"
-import { Search, MapPin, Phone, Mail, Globe, Clock, Facebook, Instagram } from "lucide-react"
+import { Suspense, useState } from "react"
+import { Search, MapPin, Phone, Mail, Globe, Clock, Facebook, Instagram, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,11 +10,12 @@ import { trpc } from "@/utils/trpc";
 import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
 
 export default function Index() {
+  const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useQueryState("search", { defaultValue: "" });
   const [selectedCategory, setSelectedCategory] = useQueryState("category", { defaultValue: "All" });
-  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions(), trpc.getAllCategories.queryOptions()] });
+  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions({ search: searchTerm, categoryId: selectedCategory }), trpc.getAllCategories.queryOptions()] });
 
-  
+
 
   return (
     <div className="min-h-screen w-full bg-background relative">
@@ -39,35 +40,53 @@ export default function Index() {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
                     placeholder="Search businesses, services, or locations..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
                     className="pl-10 vintage-body bg-input border-border"
                   />
                 </div>
                 <Button
                   variant="outline"
                   className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
+                  onClick={() => setSearchTerm(inputValue)}
                 >
                   Search Directory
                 </Button>
+                {
+                  searchTerm!=="" && (
+                    <Button variant="destructive" size="sm" onClick={() => setSearchTerm("")}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )
+                }
               </div>
+              <Suspense>
 
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
+                <div className="flex flex-wrap gap-2">
                   <Button
-                    key={category.id}
-                    variant={selectedCategory === category.name ? "default" : "outline"}
+                    variant="outline"
                     size="sm"
-                    onClick={() => setSelectedCategory(category.name)}
-                    className={`vintage-body ${selectedCategory === category.name
-                      ? "bg-secondary text-secondary-foreground"
-                      : "bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
-                      }`}
+                    onClick={() => setSelectedCategory("All")}
+                    className="vintage-body bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
                   >
-                    {category.name}
+                    All
                   </Button>
-                ))}
-              </div>
+                  {categories.map((category) => (
+                    <Button
+                      key={category.id}
+                      variant={selectedCategory === category.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`vintage-body ${selectedCategory === category.id
+                        ? "bg-secondary text-secondary-foreground"
+                        : "bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
+                        }`}
+                    >
+                      {category.name}
+                    </Button>
+                  ))}
+                </div>
+              </Suspense>
             </div>
           </div>
         </section>
@@ -77,88 +96,89 @@ export default function Index() {
             <div className="mb-6">
               <p className="vintage-body text-muted-foreground">
                 Showing {businesses.length} businesses
-                {selectedCategory !== "All" && ` in ${selectedCategory}`}
+                {selectedCategory !== "All" && ` in ${categories.find((category) => category.id === selectedCategory)?.name}`}
               </p>
             </div>
-
-            <div className="grid gap-6">
-              {businesses.map((business) => (
-                <Card
-                  key={business.id}
-                  className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-3">
-                          <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
-                          <Badge variant="secondary" className="vintage-body bg-secondary text-secondary-foreground">
-                            {business.categoryId}
-                          </Badge>
-                        </div>
-
-                        <p className="vintage-body text-foreground mb-4 leading-relaxed">{business.description}</p>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-accent flex-shrink-0" />
-                              <span className="vintage-body text-sm">{business.address}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Phone className="h-4 w-4 text-accent flex-shrink-0" />
-                              <span className="vintage-body text-sm font-semibold">{business.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4 text-accent flex-shrink-0" />
-                              <span className="vintage-body text-sm">{business.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Globe className="h-4 w-4 text-accent flex-shrink-0" />
-                              <span className="vintage-body text-sm text-primary underline">{business.website}</span>
-                            </div>
+            <Suspense>
+              <div className="grid gap-6">
+                {businesses.map((business) => (
+                  <Card
+                    key={business.id}
+                    className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-3">
+                            <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
+                            <Badge variant="secondary" className="vintage-body bg-secondary text-secondary-foreground">
+                              {categories.find((category) => category.id === business.categoryId)?.name}
+                            </Badge>
                           </div>
 
-                          <div className="space-y-3">
-                            <div className="flex items-start gap-2">
-                              <Clock className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
-                              <span className="vintage-body text-sm">{business.timetable}</span>
+                          <p className="vintage-body text-foreground mb-4 leading-relaxed">{business.description}</p>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm">{business.address}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm font-semibold">{business.phone}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm">{business.email}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Globe className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm text-primary underline">{business.website}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                              {business.facebookUrl && (
-                                <Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
-                              )}
-                              {business.instagramUrl && (
-                                <Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
-                              )}
-                              <MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-2">
+                                <Clock className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+                                <span className="vintage-body text-sm">{business.timetable}</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                {business.facebookUrl && (
+                                  <Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                )}
+                                {business.instagramUrl && (
+                                  <Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                )}
+                                <MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="lg:w-48 flex lg:flex-col gap-2">
-                        <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
-                          Call Now
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
-                        >
-                          Get Directions
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
-                        >
-                          Visit Website
-                        </Button>
+                        <div className="lg:w-48 flex lg:flex-col gap-2">
+                          <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
+                            Call Now
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
+                          >
+                            Get Directions
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
+                          >
+                            Visit Website
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </Suspense>
 
             {businesses.length === 0 && (
               <div className="text-center py-12">

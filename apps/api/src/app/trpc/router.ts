@@ -44,8 +44,23 @@ export const appRouter = t.router({
       users[user.id] = user;
       return user;
     }),
-  getAllBusinesses: t.procedure.query(async (opts) => {
-    const businesses = await prisma.business.findMany();
+  getAllBusinesses: t.procedure.input(z.object({
+    search: z.string().optional(),
+    categoryId: z.string().optional(),
+  })).query(async ({input}) => {
+    const businesses = await prisma.business.findMany({
+      where:{
+        ...(input.search && {
+          name: {
+            contains: input.search,
+            mode: 'insensitive',
+          },
+        }),
+        ...(input.categoryId!=='All' && {
+          categoryId: input.categoryId,
+        }),
+      },
+    });
     return businesses;
   }),
   getAllCategories: t.procedure.query(async (opts) => {
