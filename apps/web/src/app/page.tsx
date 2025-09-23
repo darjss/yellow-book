@@ -7,13 +7,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useQueryState } from "nuqs";
 import { trpc } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
 
 export default function Index() {
-  const [searchTerm, setSearchTerm] = useQueryState("search",{defaultValue: ""});
-  const [selectedCategory, setSelectedCategory] = useQueryState("category",{defaultValue: "All"});
-  const data  = useQuery(trpc.getUserById.queryOptions("1"));
-  console.log(data);
+  const [searchTerm, setSearchTerm] = useQueryState("search", { defaultValue: "" });
+  const [selectedCategory, setSelectedCategory] = useQueryState("category", { defaultValue: "All" });
+  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions(), trpc.getAllCategories.queryOptions()] });
+
+  
+
   return (
     <div className="min-h-screen w-full bg-background relative">
 
@@ -53,16 +55,16 @@ export default function Index() {
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
                   <Button
-                    key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
+                    key={category.id}
+                    variant={selectedCategory === category.name ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedCategory(category)}
-                    className={`vintage-body ${selectedCategory === category
-                        ? "bg-secondary text-secondary-foreground"
-                        : "bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => setSelectedCategory(category.name)}
+                    className={`vintage-body ${selectedCategory === category.name
+                      ? "bg-secondary text-secondary-foreground"
+                      : "bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
                       }`}
                   >
-                    {category}
+                    {category.name}
                   </Button>
                 ))}
               </div>
@@ -74,13 +76,13 @@ export default function Index() {
           <div className="max-w-6xl mx-auto">
             <div className="mb-6">
               <p className="vintage-body text-muted-foreground">
-                Showing {filteredBusinesses.length} businesses
+                Showing {businesses.length} businesses
                 {selectedCategory !== "All" && ` in ${selectedCategory}`}
               </p>
             </div>
 
             <div className="grid gap-6">
-              {filteredBusinesses.map((business) => (
+              {businesses.map((business) => (
                 <Card
                   key={business.id}
                   className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
@@ -91,7 +93,7 @@ export default function Index() {
                         <div className="flex items-start justify-between mb-3">
                           <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
                           <Badge variant="secondary" className="vintage-body bg-secondary text-secondary-foreground">
-                            {business.category}
+                            {business.categoryId}
                           </Badge>
                         </div>
 
@@ -158,7 +160,7 @@ export default function Index() {
               ))}
             </div>
 
-            {filteredBusinesses.length === 0 && (
+            {businesses.length === 0 && (
               <div className="text-center py-12">
                 <p className="vintage-body text-muted-foreground text-lg">
                   No businesses found matching your search criteria.

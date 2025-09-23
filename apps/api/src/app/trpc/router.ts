@@ -1,5 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
+import prisma from '../lib/prisma';
 type User = {
   id: string;
   name: string;
@@ -43,6 +44,14 @@ export const appRouter = t.router({
       users[user.id] = user;
       return user;
     }),
+  getAllBusinesses: t.procedure.query(async (opts) => {
+    const businesses = await prisma.business.findMany();
+    return businesses;
+  }),
+  getAllCategories: t.procedure.query(async (opts) => {
+    const categories = await prisma.category.findMany();
+    return categories;
+  }),
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
