@@ -28,7 +28,7 @@ export const appRouter = t.router({
     console.log(opts.input);
     console.log(users[opts.input]);
     console.log(opts.input);
-    return {id: opts.input, name:"John Doe", bio: "I am a software engineer"} // input type is string
+    return users[opts.input];
   }),
   createUser: t.procedure
     .input(
