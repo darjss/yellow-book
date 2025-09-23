@@ -1,28 +1,24 @@
 "use client";
+import { useState } from "react"
+import { Search, MapPin, Phone, Mail, Globe, Clock, Facebook, Instagram } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { useQueryState } from "nuqs";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Index() {
+  const [searchTerm, setSearchTerm] = useQueryState("search",{defaultValue: ""});
+  const [selectedCategory, setSelectedCategory] = useQueryState("category",{defaultValue: "All"});
   const data  = useQuery(trpc.getUserById.queryOptions("1"));
   console.log(data);
   return (
     <div className="min-h-screen w-full bg-background relative">
-      {/* Paper Texture Background */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 1px 1px, rgba(139,69,19,0.08) 1px, transparent 0),
-            repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(160,82,45,0.02) 2px, rgba(160,82,45,0.02) 4px),
-            repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(160,82,45,0.02) 2px, rgba(160,82,45,0.02) 4px)
-          `,
-          backgroundSize: "8px 8px, 32px 32px, 32px 32px",
-        }}
-      />
 
-      {/* Content */}
+
       <div className="relative z-10">
-        {/* Header */}
         <header className="border-b-2 border-primary bg-card/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center">
@@ -33,7 +29,6 @@ export default function Index() {
           </div>
         </header>
 
-        {/* Search and Filter Section */}
         <section className="bg-muted/50 border-b border-border">
           <div className="container mx-auto px-4 py-6">
             <div className="max-w-4xl mx-auto">
@@ -55,7 +50,6 @@ export default function Index() {
                 </Button>
               </div>
 
-              {/* Category Filter */}
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
                   <Button
@@ -76,7 +70,6 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Business Listings */}
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             <div className="mb-6">
@@ -94,7 +87,6 @@ export default function Index() {
                 >
                   <CardContent className="p-6">
                     <div className="flex flex-col lg:flex-row gap-6">
-                      {/* Business Info */}
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-3">
                           <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
@@ -106,7 +98,6 @@ export default function Index() {
                         <p className="vintage-body text-foreground mb-4 leading-relaxed">{business.description}</p>
 
                         <div className="grid md:grid-cols-2 gap-4">
-                          {/* Contact Info */}
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
                               <MapPin className="h-4 w-4 text-accent flex-shrink-0" />
@@ -126,7 +117,6 @@ export default function Index() {
                             </div>
                           </div>
 
-                          {/* Hours & Social */}
                           <div className="space-y-3">
                             <div className="flex items-start gap-2">
                               <Clock className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
@@ -145,7 +135,6 @@ export default function Index() {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
                       <div className="lg:w-48 flex lg:flex-col gap-2">
                         <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
                           Call Now
@@ -182,7 +171,6 @@ export default function Index() {
           </div>
         </main>
 
-        {/* Footer */}
         <footer className="bg-primary text-primary-foreground border-t-2 border-secondary">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center">
