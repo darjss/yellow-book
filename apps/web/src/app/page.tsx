@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useQueryState } from "nuqs";
 import { trpc } from "@/utils/trpc";
 import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
+import Link from "next/link";
 
 export default function Index() {
   const [inputValue, setInputValue] = useState("");
@@ -53,7 +54,7 @@ export default function Index() {
                   Search Directory
                 </Button>
                 {
-                  searchTerm!=="" && (
+                  searchTerm !== "" && (
                     <Button variant="destructive" size="sm" onClick={() => setSearchTerm("")}>
                       <X className="h-4 w-4" />
                     </Button>
@@ -145,33 +146,46 @@ export default function Index() {
                               </div>
                               <div className="flex items-center gap-3">
                                 {business.facebookUrl && (
-                                  <Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  <Link href={business.facebookUrl}>
+
+                                    <Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  </Link>
                                 )}
                                 {business.instagramUrl && (
-                                  <Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  <Link href={business.instagramUrl}>
+                                    <Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  </Link>
                                 )}
-                                <MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                <Link href={business.googleMapUrl}>
+                                  <MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                </Link>
                               </div>
                             </div>
                           </div>
                         </div>
 
                         <div className="lg:w-48 flex lg:flex-col gap-2">
-                          <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
-                            Call Now
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
-                          >
-                            Get Directions
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
-                          >
-                            Visit Website
-                          </Button>
+                          <Link href={`tel:${business.phone}`}>
+                            <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
+                              Call Now
+                            </Button>
+                          </Link>
+                          <Link href={business.googleMapUrl}>
+                            <Button
+                              variant="outline"
+                              className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
+                            >
+                              Get Directions
+                            </Button>
+                          </Link>
+                          <Link href={business.website}>
+                            <Button
+                              variant="outline"
+                              className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
+                            >
+                              Visit Website
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </CardContent>
