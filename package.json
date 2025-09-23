@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "typecheck": "nx typecheck",
-    "lint": "nx lint",
+    "typecheck": "nx run-many --target=typecheck --projects=@yellow-book/api,@yellow-book/web --parallel",
+    "lint": "nx run-many --target=lint --projects=@yellow-book/api,@yellow-book/web --parallel",
     "dev:api": "nx dev @yellow-book/api",
     "dev:web": "nx dev @yellow-book/web",
     "dev": "nx run-many --target=dev --projects=@yellow-book/api,@yellow-book/web --parallel",

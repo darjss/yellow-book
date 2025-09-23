@@ -10,7 +10,10 @@
       "path": "./apps/api"
     },
     {
-      "path": "./libs"
+      "path": "./libs/config"
+    },
+    {
+      "path": "./libs/types"
     }
   ]
 }

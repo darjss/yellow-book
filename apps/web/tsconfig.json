@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,15 +17,10 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
+      "@/*": ["./src/*"],
       "@lib/types": ["../../libs/types/src/index.ts"]
     },
-    "typeRoots": [
-      "../../node_modules/@types",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["../../node_modules/@types", "./node_modules/@types"],
     "types": [],
     "outDir": "dist",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
@@ -55,5 +46,10 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../api"
+    }
   ]
 }
