@@ -35,7 +35,10 @@
     "targets": {
       "build": {
         "executor": "@nx/next:build",
-        "outputs": ["{workspaceRoot}/dist/{projectRoot}", "{workspaceRoot}/{projectRoot}/.next"],
+    "outputs": [
+  "{workspaceRoot}/dist/apps/web",
+  "{projectRoot}/.next"
+    ],
         "options": {
           "outputPath": "dist/apps/web",
           "buildLibsFromSource": true
