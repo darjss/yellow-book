@@ -7,14 +7,16 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useQueryState } from "nuqs";
 import { trpc } from "@/utils/trpc";
-import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import Link from "next/link";
+
+
 
 export default function Index() {
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useQueryState("search", { defaultValue: "" });
   const [selectedCategory, setSelectedCategory] = useQueryState("category", { defaultValue: "All" });
-  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions({ search: searchTerm, categoryId: selectedCategory }), trpc.getAllCategories.queryOptions()] });
+  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions({ search: searchTerm, categoryId: selectedCategory }), trpc.getAllCategories.queryOptions()] }) 
 
 
 

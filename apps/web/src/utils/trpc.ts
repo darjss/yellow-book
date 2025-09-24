@@ -9,8 +9,6 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000,
       },
     },
@@ -50,7 +48,7 @@ export const queryClient = new QueryClient({
 const trpcClient = createTRPCClient<AppRouter>({
 	links: [
 		httpBatchLink({
-			url: `http://localhost:3001/trpc`,
+			url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`,
 			fetch(url, options) {
 				return fetch(url, {
 					...options,
