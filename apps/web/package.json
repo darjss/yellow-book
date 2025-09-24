@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "nx dev @yellow-book/web",
+    "build": "nx build @yellow-book/web",
+    "start": "nx start @yellow-book/web",
+    "lint": "nx lint @yellow-book/web",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -33,6 +33,11 @@
   },
   "devDependencies": {
     "@types/minimatch": "^6.0.0",
+    "@nx/workspace": "21.5.2",
+    "@swc-node/register": "~1.9.1",
+    "@nx/js": "21.5.2",
+    "@nx/next": "21.5.2",
+    "@nx/node": "21.5.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
