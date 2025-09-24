@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 
 export interface BusinessType {
   id: string;
@@ -8,6 +7,8 @@ export interface BusinessType {
   address: string;
   phone: number;
   email: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export type Category = { id: string; name: string };
 export type Business = {
@@ -23,4 +24,6 @@ export type Business = {
   instagramUrl: string;
   timetable: string;
   categoryId: string;
+  createdAt: string;
+  updatedAt: string;
 };

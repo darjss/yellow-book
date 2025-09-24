@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useQueryState } from "nuqs";
 import { trpc } from "@/utils/trpc";
 import { useSuspenseQueries } from "@tanstack/react-query";
+import { type Category, type Business } from "@lib/types";
 import Link from "next/link";
 
 
@@ -16,7 +17,7 @@ export default function Index() {
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useQueryState("search", { defaultValue: "" });
   const [selectedCategory, setSelectedCategory] = useQueryState("category", { defaultValue: "All" });
-  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions({ search: searchTerm, categoryId: selectedCategory }), trpc.getAllCategories.queryOptions()] }) 
+  const [{ data: businesses }, { data: categories }] = useSuspenseQueries({ queries: [trpc.getAllBusinesses.queryOptions({ search: searchTerm, categoryId: selectedCategory }), trpc.getAllCategories.queryOptions()] })
 
 
 
@@ -74,7 +75,7 @@ export default function Index() {
                   >
                     All
                   </Button>
-                  {categories.map((category) => (
+                  {categories.map((category: Category) => (
                     <Button
                       key={category.id}
                       variant={selectedCategory === category.id ? "default" : "outline"}
@@ -104,7 +105,7 @@ export default function Index() {
             </div>
             <Suspense>
               <div className="grid gap-6">
-                {businesses.map((business) => (
+                {businesses.map((business: Business) => (
                   <Card
                     key={business.id}
                     className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
@@ -115,7 +116,7 @@ export default function Index() {
                           <div className="flex items-start justify-between mb-3">
                             <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
                             <Badge variant="secondary" className="vintage-body bg-secondary text-secondary-foreground">
-                              {categories.find((category) => category.id === business.categoryId)?.name}
+                              {categories.find((category: Category) => category.id === business.categoryId)?.name}
                             </Badge>
                           </div>
 
