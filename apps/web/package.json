@@ -31,6 +31,7 @@
     "tailwindcss": "^4.1.13",
     "zod": "^4.1.11"
   },
+
   "devDependencies": {
     "@types/minimatch": "^6.0.0",
     "@nx/workspace": "21.5.2",
@@ -39,6 +40,8 @@
     "@nx/next": "21.5.2",
     "@nx/node": "21.5.2",
     "@types/node": "^20",
+    "@nx/eslint": "21.5.2",
+    "@nx/eslint-plugin": "21.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tw-animate-css": "^1.3.8",
