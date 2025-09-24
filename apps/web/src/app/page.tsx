@@ -23,8 +23,6 @@ export default function Index() {
 
   return (
     <div className="min-h-screen w-full bg-background relative">
-
-
       <div className="relative z-10">
         <header className="border-b-2 border-primary bg-card/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-8">
@@ -100,7 +98,7 @@ export default function Index() {
             <div className="mb-6">
               <p className="vintage-body text-muted-foreground">
                 Showing {businesses.length} businesses
-                {selectedCategory !== "All" && ` in ${categories.find((category) => category.id === selectedCategory)?.name}`}
+                {selectedCategory !== "All" && ` in ${categories.find((category: Category) => category.id === selectedCategory)?.name}`}
               </p>
             </div>
             <Suspense>
