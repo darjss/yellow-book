@@ -31,24 +31,7 @@
     "tailwindcss": "^4.1.13",
     "zod": "^4.1.11"
   },
-  "nx": {
-    "targets": {
-      "build": {
-        "executor": "@nx/next:build",
-        "outputs": ["dist/apps/web"],
-        "options": {
-          "outputPath": "dist/apps/web",
-          "buildLibsFromSource": true
-        }
-      },
-      "dev": {
-        "executor": "@nx/next:dev",
-        "options": {
-          "buildTarget": "@yellow-book/web:build"
-        }
-      }
-    }
-  },
+
 
   "devDependencies": {
     "@eslint/compat": "^1.1.1",

@@ -21,7 +21,7 @@
           "targetName": "build",
           "configName": "tsconfig.lib.json",
           "buildDepsName": "build-deps",
-          "watchDepsName": "watch-deps"
+          " atchDepsName": "watch-deps"
         }
       },
       "exclude": ["libs/*", "libs/config/*", "libs/types/*"]
