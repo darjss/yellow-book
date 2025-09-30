@@ -28,7 +28,7 @@
 - **Docker Compose** for containerization
 - **Hosting on DigitalOcean** droplet VM because of education 200$ credits
 - **Nginx** for reverse proxy management
-
+- **Github Actions** for CI because standard and cheap 
 ---
 
 ## Todo
