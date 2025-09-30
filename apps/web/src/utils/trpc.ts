@@ -46,10 +46,13 @@ export const queryClient = new QueryClient({
 });
 
 function getBaseUrl() {
-    if (process.env.NEXT_PUBLIC_BACKEND_URL) return process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (typeof window !== 'undefined') return '';
-    // SSR: use internal Docker service name by default; override with env if set
-    return process.env.INTERNAL_BACKEND_URL || 'http://api:3001';
+  if (typeof window !== 'undefined') return '';
+  // SSR: prefer internal Docker service; fallback to configured public URL or default
+  return (
+    process.env.INTERNAL_BACKEND_URL ||
+    process.env.NEXT_PUBLIC_BACKEND_URL ||
+    'http://api:3001'
+  );
 }
 
 const trpcClient = createTRPCClient<AppRouter>({
