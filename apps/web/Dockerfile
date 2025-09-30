@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json bun.lock ./
 COPY apps/web/package.json ./apps/web/package.json
 COPY libs ./libs
+COPY apps/api ./apps/api
 COPY apps/web ./apps/web
 COPY tsconfig.base.json tsconfig.json ./
 
@@ -14,7 +15,7 @@ FROM deps AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN bunx nx build @yellow-book/web --configuration=production
 
-FROM node:20-alpine AS runner
+FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
