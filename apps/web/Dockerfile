@@ -38,4 +38,4 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /out ./
 
 EXPOSE 3000
-CMD ["bun", "server.js"]
+CMD ["bun", "apps/web/server.js"]
