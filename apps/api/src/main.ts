@@ -5,7 +5,7 @@ import { createContext } from './app/trpc/context';
 import { appRouter, type AppRouter } from './app/trpc/router';
 import { fastifyTRPCPlugin, FastifyTRPCPluginOptions } from '@trpc/server/adapters/fastify';
 
-const host = process.env.HOST ?? 'localhost';
+const host = process.env.HOST ?? '0.0.0.0';
 const port = process.env.PORT ? Number(process.env.PORT) : 3001;
 
 const server = Fastify({
@@ -14,9 +14,12 @@ const server = Fastify({
 });
 
 server.register(cors, {
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com']  
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
+  origin:
+    process.env.NODE_ENV === 'production'
+      ? (process.env.CORS_ORIGINS
+          ? process.env.CORS_ORIGINS.split(',').map((s) => s.trim())
+          : ['*'])
+      : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: [

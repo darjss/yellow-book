@@ -45,18 +45,25 @@ export const queryClient = new QueryClient({
 	}),
 });
 
+function getBaseUrl() {
+    if (process.env.NEXT_PUBLIC_BACKEND_URL) return process.env.NEXT_PUBLIC_BACKEND_URL;
+    if (typeof window !== 'undefined') return '';
+    // SSR: use internal Docker service name by default; override with env if set
+    return process.env.INTERNAL_BACKEND_URL || 'http://api:3001';
+}
+
 const trpcClient = createTRPCClient<AppRouter>({
-	links: [
-		httpBatchLink({
-			url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`,
-			fetch(url, options) {
-				return fetch(url, {
-					...options,
-					credentials: "include",
-				});
-			},
-		}),
-	],
+    links: [
+        httpBatchLink({
+            url: `${getBaseUrl()}/trpc`,
+            fetch(url, options) {
+                return fetch(url, {
+                    ...options,
+                    credentials: "include",
+                });
+            },
+        }),
+    ],
 });
 
 export const trpc: TRPCOptionsProxy<AppRouter> = createTRPCOptionsProxy<AppRouter>({

@@ -1,0 +1,11 @@
+# Ignore build outputs and temporary artifacts
+# Prevent Nx from discovering generated package.json files as separate projects
+apps/**/dist/**
+dist/**
+tmp/**
+
+# Common extras (safe to ignore)
+**/.turbo/**
+**/.next/**
+**/node_modules/**
+
