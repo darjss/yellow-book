@@ -48,6 +48,6 @@ COPY --from=prod-deps /app/package.json ./package.json
 EXPOSE 3001
 
 # Start Fastify app
-CMD ["node", "main.js"]
+CMD ["bun", "main.js"]
 
 
