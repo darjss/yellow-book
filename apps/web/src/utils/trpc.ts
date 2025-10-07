@@ -73,3 +73,7 @@ export const trpc: TRPCOptionsProxy<AppRouter> = createTRPCOptionsProxy<AppRoute
 	client: trpcClient,
 	queryClient:getQueryClient(),
 });
+
+// Server-side tRPC client for use in React Server Components
+// This is the vanilla client without React Query integration
+export const serverApi: ReturnType<typeof createTRPCClient<AppRouter>> = trpcClient;

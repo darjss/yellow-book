@@ -49,6 +49,8 @@ server.register(fastifyTRPCPlugin, {
 server.register(app);
 
 server.listen({ port, host }, (err) => {
+  console.log('server', server);
+  console.log(process.env.DATABASE_URL);
   if (err) {
     server.log.error(err);
     process.exit(1);

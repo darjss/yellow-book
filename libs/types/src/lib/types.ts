@@ -26,4 +26,7 @@ export type Business = {
   categoryId: string;
   createdAt: string;
   updatedAt: string;
+  category: {
+    name: string;
+  };
 };

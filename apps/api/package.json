@@ -84,7 +84,10 @@
         ],
         "options": {
           "buildTarget": "@yellow-book/api:build",
-          "runBuildTargetDependencies": false
+          "runBuildTargetDependencies": false,
+          "runtimeArgs": [
+            "--env-file=apps/api/.env"
+          ]
         },
         "configurations": {
           "development": {

@@ -11,6 +11,9 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 import { type Category, type Business } from "@lib/types";
 import Link from "next/link";
 
+import { CategoryFiltersSkeleton } from "@/components/category-filters-skeleton";
+import { BusinessListSkeleton } from "@/components/business-list-skeleton";
+
 
 
 export default function Index() {
@@ -62,7 +65,7 @@ export default function Index() {
                   )
                 }
               </div>
-              <Suspense>
+              <Suspense fallback={<CategoryFiltersSkeleton />}>
 
                 <div className="flex flex-wrap gap-2">
                   <Button
@@ -101,7 +104,7 @@ export default function Index() {
                 {selectedCategory !== "All" && ` in ${categories.find((category: Category) => category.id === selectedCategory)?.name}`}
               </p>
             </div>
-            <Suspense>
+            <Suspense fallback={<BusinessListSkeleton />}>
               <div className="grid gap-6">
                 {businesses.map((business: Business) => (
                   <Card
@@ -112,9 +115,11 @@ export default function Index() {
                       <div className="flex flex-col lg:flex-row gap-6">
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-3">
-                            <h2 className="vintage-heading text-2xl text-primary">{business.name}</h2>
+                            <Link href={`/business/${business.id}`}>
+                              <h2 className="vintage-heading text-2xl text-primary hover:underline cursor-pointer">{business.name}</h2>
+                            </Link>
                             <Badge variant="secondary" className="vintage-body bg-secondary text-secondary-foreground">
-                              {categories.find((category: Category) => category.id === business.categoryId)?.name}
+                                  {business.category.name}
                             </Badge>
                           </div>
 
@@ -208,17 +213,7 @@ export default function Index() {
           </div>
         </main>
 
-        <footer className="bg-primary text-primary-foreground border-t-2 border-secondary">
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center">
-              <h3 className="vintage-heading text-xl mb-2">Business Directory</h3>
-              <p className="vintage-body text-sm opacity-90">
-                Connecting communities since 1955 • Your trusted local business guide
-              </p>
-              <div className="w-16 h-0.5 bg-secondary mx-auto mt-4"></div>
-            </div>
-          </div>
-        </footer>
+    
       </div>
     </div>
   );

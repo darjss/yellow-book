@@ -1,40 +1,67 @@
-# Web ahisan lab 3
+# Веб ахисан лаб 3
 
 **B.Aviddaram**
 
-**Deployed link:** https://yellow-book.darjs.dev/
+**Тавигдсан холбоос:** https://yellow-book.darjs.dev/
 
 ---
+## Суурилуулалт
 
-## Tech Choices
+1. **Хамааралтай сангуудыг суулгах**
+   ```bash
+   bun install
+   ```
 
-### Frontend
+2. **Өгөгдлийн санг тохируулах**
+   - `apps/api` директорт `.env` файл үүсгэнэ:
+     ```
+     DATABASE_URL="postgresql://user:password@localhost:5432/yellow_book"
+     ```
 
-- **Nextjs React 19** for client with react server components and suspense for better loading
-- **Tanstack query** - Manage fetch, server side state with caching retries/ used expreminetal next package to enable easy streaming client side
-- **Tailwind, Shadcn** - easy css styling customizable component library in my own code base
-- **Nuqs** - Makes it easy to use search params for state management so reloading keeps state/shareable urls with good typing
+3. **Prisma миграцийг ажиллуулах**
+   ```bash
+   cd apps/api
+   bunx prisma migrate dev    
+   bunx prisma generate       
+   bunx prisma db seed
+   ```
+
+4. **Хөгжүүлэлтийн сервер асаах**
+   ```bash
+   cd ../..                   # Root руу буцах
+   bun dev                    # Frontend ба backend хоёуланг эхлүүлэх
+   ```
+
+
+## Технологийн сонголтууд
+
+### Frontend   
+
+- **Nextjs React 19** — client талд, React Server Components болон Suspense ашиглан илүү хурдан ачаалалт
+- **Tanstack query** — fetch болон сервер талын state-ийг кэш, дахин оролдлогоор удирдах; client талд ssr streaming-ийг хялбар болгох experimental Next package ашигласан
+- **Tailwind, Shadcn** — CSS стилинг хялбар, өөрчлөх боломжтой component library-г өөрийн кодонд ашигласан
+- **Nuqs** — search params-ыг state менежментэд ашиглахыг хялбарчилж, дахин ачаалсан ч төлөв хадгалах/shareable URL, сайн typing
 
 ### Backend
 
-- **Fastify** - simple framework on top of node with better performance than express pretty similiar to express
-- **Trpc** - end to end typesafety automatically define a function on the backend and get the typing automatically on the frontend with tanstack query integration has input validation support with zod
-- **Prisma** - ORM for interacting with database with typescript support and typing
+- **Fastify** — Express-тэй төстэй, илүү гүйцэтгэлтэй, энгийн фрэймворк
+- **Trpc** — end-to-end type safety; backend дээр function тодорхойлоход frontend талд typing автоматаар бий болно; TanStack Query интеграц; Zod ашиглан input validation
+- **Prisma** — TypeScript дэмжлэгтэй ORM, өгөгдлийн сантай харилцах
 
 ### Hosting/Extras
 
-- **Nx** for monorepo management with prettier eslint support out of the box with plugins
-- **Bun** for runtime package manager node module caching, huge multiples of performance over npm
-- **Docker Compose** for containerization
-- **Hosting on DigitalOcean** droplet VM because of education 200$ credits
-- **Nginx** for reverse proxy management
-- **Github Actions** for CI because standard and cheap 
+- **Nx** — monorepo удирдлага; prettier, eslint support out of the box, plugins
+- **Bun** — runtime + package manager; node module caching; npm-ээс олон дахин гүйцэтгэл
+- **Docker Compose** — контейнерчлал
+- **Hosting on DigitalOcean** droplet VM (education 200$ credits ашигласан)
+- **Nginx** — reverse proxy удирдлага
+- **Github Actions** — CI-д ашигласан, стандарт бөгөөд хямд 
 ---
 
-## Todo
+## Хийх зүйлс
 
-- [ ] Add realistic mongolian data
-- [ ] improve ui
-- [ ] add business specific page
-- [ ] https with caddy on deployment
-- [ ] add business?
+- [ ] Бодитой монгол өгөгдөл нэмэх
+- [ ] UI-ийг сайжруулах
+- [ ] Бизнесийн тусгай хуудас нэмэх
+- [ ] Deployment дээр Caddy ашиглан HTTPS идэвхжүүлэх
+- [ ] Бизнес нэмэх?

@@ -36,7 +36,9 @@
     "src/**/*.tsx",
     "../../libs/types/src/**/*.ts",
     "../../libs/types/src/**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/components/**/*.ts",
+    "src/components/**/*.tsx"
   ],
   "exclude": [
     "out-tsc",
