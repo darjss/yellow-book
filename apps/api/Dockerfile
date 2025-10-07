@@ -31,7 +31,7 @@ COPY apps/api/prisma ./prisma
 RUN bunx prisma generate
 
 ## Runtime stage
-FROM node:20-alpine AS runner
+FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 
 # Set NODE_ENV
