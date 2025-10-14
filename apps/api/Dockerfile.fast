@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 ## Build stage
 FROM oven/bun:1-alpine AS base
 WORKDIR /app
@@ -16,8 +18,9 @@ COPY libs/config/package.json ./libs/config/package.json
 COPY libs/types/package.json ./libs/types/package.json
 COPY tsconfig.base.json tsconfig.json ./
 
-# Install dependencies (this layer is cached until package files change)
-RUN bun install
+# Install dependencies with cache mount (ultra-fast!)
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install
 
 # NOW copy source code (changes here won't bust the install cache)
 COPY libs ./libs
@@ -32,7 +35,8 @@ RUN bunx nx build @yellow-book/api --configuration=production && \
 FROM base AS prod-deps
 WORKDIR /app
 COPY apps/api/package.json ./package.json
-RUN bun install --production
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --production
 COPY apps/api/prisma ./prisma
 RUN bunx prisma generate
 
@@ -48,12 +52,8 @@ COPY --from=builder /app/dist/apps/api ./
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/package.json ./package.json
 
-# Prisma needs the query engine in production; it is present in node_modules of the builder.
-# If using Accelerate/Data Proxy, ensure DATABASE_URL uses the proxy.
-
 EXPOSE 3001
 
 # Start Fastify app
 CMD ["bun", "main.js"]
-
 
