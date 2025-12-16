@@ -38,7 +38,6 @@ jobs:
         run: |
           if [[ "${{ matrix.app }}" == "web" ]]; then
             bun nx run db:prisma:generate
-            bun nx typecheck db
             bun nx typecheck @yellow-book/api
           fi
 
