@@ -12,6 +12,16 @@ import { google } from '@ai-sdk/google';
 import { embed, streamText, convertToModelMessages, UIMessage } from 'ai';
 import prisma from './app/lib/prisma';
 
+interface BusinessSearchResult {
+  name: string;
+  description: string;
+  address: string;
+  phone: string;
+  website: string;
+  timetable: string;
+  categoryName: string;
+}
+
 const host = process.env.HOST ?? '0.0.0.0';
 const port = process.env.PORT ? Number(process.env.PORT) : 3001;
 
@@ -89,27 +99,17 @@ server.post('/api/ai/chat', async (request, reply) => {
   });
 
   const vectorString = `[${embedding.join(',')}]`;
-  const businesses = await prisma.$queryRawUnsafe<
-    Array<{
-      name: string;
-      description: string;
-      address: string;
-      phone: string;
-      website: string;
-      timetable: string;
-      categoryName: string;
-    }>
-  >(
+  const businesses = (await prisma.$queryRawUnsafe(
     `SELECT b.name, b.description, b.address, b.phone, b.website, b.timetable, c.name as "categoryName"
      FROM "Business" b JOIN "Category" c ON b."categoryId" = c.id
      WHERE b.embedding IS NOT NULL
      ORDER BY b.embedding <=> $1::vector LIMIT 5`,
     vectorString
-  );
+  )) as BusinessSearchResult[];
 
   const context = businesses
     .map(
-      (b, i) =>
+      (b: BusinessSearchResult, i: number) =>
         `[${i + 1}] ${b.name} (${b.categoryName}): ${b.description} | ${
           b.address
         } | ${b.phone}`
