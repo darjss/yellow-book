@@ -14,6 +14,8 @@ permissions:
 env:
   AWS_REGION: ap-southeast-1
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-southeast-1.amazonaws.com
+  EC2_HOST: ${{ secrets.EC2_HOST }}
+  EC2_USER: ec2-user
 
 jobs:
   # Matrix build for testing and validation
@@ -118,23 +120,82 @@ jobs:
           fi
           docker stop health-check
 
+  # Deploy to EC2
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Copy deployment files to EC2
+        run: |
+          scp -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
+            docker-compose.prod.yml \
+            nginx.conf \
+            ec2/deploy.sh \
+            ec2/fetch-secrets.sh \
+            ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:/opt/yellow-book/
+
+      - name: Deploy to EC2
+        run: |
+          ssh -i ~/.ssh/ec2_key -o StrictHostKeyChecking=no \
+            ${{ env.EC2_USER }}@${{ env.EC2_HOST }} \
+            "cd /opt/yellow-book && \
+             chmod +x deploy.sh fetch-secrets.sh && \
+             AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} \
+             AWS_REGION=${{ env.AWS_REGION }} \
+             ./deploy.sh ${{ github.sha }}"
+
+      - name: Health check
+        run: |
+          echo "Waiting for services to be healthy..."
+          sleep 30
+
+          # Check if the service is responding
+          for i in {1..5}; do
+            if curl -sf http://${{ env.EC2_HOST }}/ > /dev/null 2>&1; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+          echo "Health check failed after 5 attempts"
+          exit 1
+
   # Generate health report
   health-report:
-    needs: [test, docker]
+    needs: [test, docker, deploy]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Generate health report
         run: |
-          echo "## 🚀 CI/CD Health Report" >> $GITHUB_STEP_SUMMARY
+          echo "## CI/CD Health Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| API Tests | ${{ contains(needs.test.result, 'success') && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Web Tests | ${{ contains(needs.test.result, 'success') && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Docker Build | ${{ contains(needs.docker.result, 'success') && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| ECR Push | ${{ contains(needs.docker.result, 'success') && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| API Tests | ${{ needs.test.result == 'success' && 'Passed' || 'Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Web Tests | ${{ needs.test.result == 'success' && 'Passed' || 'Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docker Build | ${{ needs.docker.result == 'success' && 'Passed' || 'Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| EC2 Deploy | ${{ needs.deploy.result == 'success' && 'Passed' || 'Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📦 ECR Images" >> $GITHUB_STEP_SUMMARY
+          echo "### ECR Images" >> $GITHUB_STEP_SUMMARY
           echo "- **API**: \`${{ env.ECR_REGISTRY }}/yellow-book-api:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Web**: \`${{ env.ECR_REGISTRY }}/yellow-book-web:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
