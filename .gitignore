@@ -56,3 +56,4 @@ kubectl
 .env
 .env.local
 .env.*.local
+*.pem
