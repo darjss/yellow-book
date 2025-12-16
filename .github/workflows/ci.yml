@@ -37,8 +37,9 @@ jobs:
       - name: Build dependencies
         run: |
           if [[ "${{ matrix.app }}" == "web" ]]; then
-            bun nx build @yellow-book/db
-            bun nx build @yellow-book/api
+            bun nx run db:prisma:generate
+            bun nx typecheck db
+            bun nx typecheck @yellow-book/api
           fi
 
       - name: Lint ${{ matrix.app }}
