@@ -2,7 +2,8 @@
 
 import type { Business } from '@lib/types';
 import { useMutation, useSuspenseQueries } from '@tanstack/react-query';
-import { Edit2, Plus, Trash2 } from 'lucide-react';
+import { Edit2, LogOut, Plus, Trash2 } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -121,13 +122,14 @@ export default function DashboardPage() {
                 Manage Your Business Listings
               </p>
             </div>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="vintage-subheading">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Business
-                </Button>
-              </DialogTrigger>
+            <div className="flex gap-2">
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="vintage-subheading">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Business
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="vintage-heading text-2xl">
@@ -138,13 +140,22 @@ export default function DashboardPage() {
                   </DialogDescription>
                 </DialogHeader>
                 <BusinessForm
-                  categories={categories}
-                  onSubmit={handleCreate}
-                  isSubmitting={createMutation.isPending}
-                  submitLabel="Add Business"
-                />
-              </DialogContent>
-            </Dialog>
+                    categories={categories}
+                    onSubmit={handleCreate}
+                    isSubmitting={createMutation.isPending}
+                    submitLabel="Add Business"
+                  />
+                </DialogContent>
+              </Dialog>
+              <Button
+                variant="outline"
+                className="vintage-subheading"
+                onClick={() => signOut({ callbackUrl: '/' })}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
