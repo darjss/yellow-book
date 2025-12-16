@@ -34,6 +34,13 @@ jobs:
 
       - run: bun install --no-cache
 
+      - name: Build dependencies
+        run: |
+          if [[ "${{ matrix.app }}" == "web" ]]; then
+            bun nx build @yellow-book/db
+            bun nx build @yellow-book/api
+          fi
+
       - name: Lint ${{ matrix.app }}
         run: bun nx lint @yellow-book/${{ matrix.app }}
 

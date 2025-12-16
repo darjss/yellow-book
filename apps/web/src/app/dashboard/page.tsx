@@ -41,7 +41,7 @@ export default function DashboardPage() {
   const createMutation = useMutation({
     mutationFn: (data: BusinessFormData) =>
       trpcMutationClient.createBusiness.mutate(data),
-    onSuccess: (data) => {
+    onSuccess: (data: Business) => {
       toast.success('Business created successfully!');
       queryClient.invalidateQueries({ queryKey: [['getAllBusinesses']] });
       setIsAddDialogOpen(false);
@@ -56,7 +56,7 @@ export default function DashboardPage() {
   const updateMutation = useMutation({
     mutationFn: (input: { id: string; data: BusinessFormData }) =>
       trpcMutationClient.updateBusiness.mutate(input),
-    onSuccess: (data) => {
+    onSuccess: (data: Business) => {
       toast.success('Business updated successfully!');
       queryClient.invalidateQueries({ queryKey: [['getAllBusinesses']] });
       setEditingBusiness(null);
