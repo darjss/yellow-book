@@ -14,6 +14,7 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY libs/config/project.json ./libs/config/project.json
 COPY libs/types/project.json ./libs/types/project.json
+COPY libs/db/package.json ./libs/db/package.json
 COPY tsconfig.base.json tsconfig.json ./
 
 # Install dependencies (this layer is cached until package files change)

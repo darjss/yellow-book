@@ -5,7 +5,7 @@ import GitHub from 'next-auth/providers/github';
 // This is used by middleware which runs on the Edge runtime
 // Note: Middleware can only check if user is logged in, not their role
 // Role checks happen in the full auth.ts which has database access
-export const authConfig = {
+export const authConfig: NextAuthConfig = {
   providers: [
     GitHub({
       allowDangerousEmailAccountLinking: true,
@@ -29,4 +29,4 @@ export const authConfig = {
       return true;
     },
   },
-} satisfies NextAuthConfig;
+};
