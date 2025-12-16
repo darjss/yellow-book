@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, MapPin, Globe, Mail, Clock, Facebook, Instagram, Star } from "lucide-react";  
 import { BusinessDetailSkeleton } from "@/components/business-detail-skeleton";
 import { serverApi } from "@/utils/trpc";
-import type { Business } from "@lib/types";
+// import type { Business } from "@lib/types";
 
 // export async function generateStaticParams() {
 //     const businesses = await serverApi.getAllBusinesses.query({});
