@@ -48,9 +48,6 @@ jobs:
       - name: Type check ${{ matrix.app }}
         run: bun nx typecheck @yellow-book/${{ matrix.app }}
 
-      - name: Build ${{ matrix.app }}
-        run: bun nx build @yellow-book/${{ matrix.app }}
-
   # Build and push Docker images to ECR (only on main branch)
   docker:
     needs: test
