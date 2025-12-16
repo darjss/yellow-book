@@ -10,7 +10,9 @@
     "noFallthroughCasesInSwitch": true,
     "declaration": true,
     "declarationMap": true,
-    "outDir": "../../dist/libs/db"
+    "outDir": "../../dist/libs/db",
+    "skipLibCheck": true,
+    "types": []
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
