@@ -1,6 +1,4 @@
-"use client";
-import type { Business, Category } from "@lib/types";
-import { useSuspenseQueries } from "@tanstack/react-query";
+import type { Business } from "@lib/types";
 import {
 	Clock,
 	Facebook,
@@ -10,36 +8,20 @@ import {
 	MapPin,
 	Phone,
 	Search,
-	X,
 } from "lucide-react";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { BusinessListSkeleton } from "@/components/business-list-skeleton";
-import { CategoryFiltersSkeleton } from "@/components/category-filters-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { trpc } from "@/utils/trpc";
+import { serverApi } from "@/utils/trpc";
 
-export default function Index() {
-	const [inputValue, setInputValue] = useState("");
-	const [searchTerm, setSearchTerm] = useQueryState("search", {
-		defaultValue: "",
-	});
-	const [selectedCategory, setSelectedCategory] = useQueryState("category", {
-		defaultValue: "All",
-	});
-	const [{ data: businesses }, { data: categories }] = useSuspenseQueries({
-		queries: [
-			trpc.getAllBusinesses.queryOptions({
-				search: searchTerm,
-				categoryId: selectedCategory,
-			}),
-			trpc.getAllCategories.queryOptions(),
-		],
-	});
+export const revalidate = 60;
+
+export default async function Index() {
+  
+	const businesses = await serverApi.getAllBusinesses.query({});
 
 	return (
 		<div className="min-h-screen w-full bg-background relative">
@@ -55,79 +37,25 @@ export default function Index() {
 							</p>
 							<div className="w-24 h-1 bg-secondary mx-auto mt-4"></div>
 						</div>
-					</div>
-				</header>
-
-				<section className="bg-muted/50 border-b border-border">
-					<div className="container mx-auto px-4 py-6">
-						<div className="max-w-4xl mx-auto">
-							<div className="flex flex-col md:flex-row gap-4 mb-6">
-								<div className="flex-1 relative">
-									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-									<Input
-										placeholder="Search businesses, services, or locations..."
-										value={inputValue}
-										onChange={(e) => setInputValue(e.target.value)}
-										className="pl-10 vintage-body bg-input border-border"
-									/>
-								</div>
+						<div className="mt-6 flex justify-center">
+							<Link href="/search">
 								<Button
 									variant="outline"
 									className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
-									onClick={() => setSearchTerm(inputValue)}
 								>
+									<Search className="mr-2 h-4 w-4" />
 									Search Directory
 								</Button>
-								{searchTerm !== "" && (
-									<Button
-										variant="destructive"
-										size="sm"
-										onClick={() => setSearchTerm("")}
-									>
-										<X className="h-4 w-4" />
-									</Button>
-								)}
-							</div>
-							<Suspense fallback={<CategoryFiltersSkeleton />}>
-								<div className="flex flex-wrap gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setSelectedCategory("All")}
-										className="vintage-body bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
-									>
-										All
-									</Button>
-									{categories.map((category: Category) => (
-										<Button
-											key={category.id}
-											variant={
-												selectedCategory === category.id ? "default" : "outline"
-											}
-											size="sm"
-											onClick={() => setSelectedCategory(category.id)}
-											className={`vintage-body ${
-												selectedCategory === category.id
-													? "bg-secondary text-secondary-foreground"
-													: "bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground"
-											}`}
-										>
-											{category.name}
-										</Button>
-									))}
-								</div>
-							</Suspense>
+							</Link>
 						</div>
 					</div>
-				</section>
+				</header>
 
 				<main className="container mx-auto px-4 py-8">
 					<div className="max-w-6xl mx-auto">
 						<div className="mb-6">
 							<p className="vintage-body text-muted-foreground">
 								Showing {businesses.length} businesses
-								{selectedCategory !== "All" &&
-									` in ${categories.find((category: Category) => category.id === selectedCategory)?.name}`}
 							</p>
 						</div>
 						<Suspense fallback={<BusinessListSkeleton />}>
@@ -245,10 +173,7 @@ export default function Index() {
 						{businesses.length === 0 && (
 							<div className="text-center py-12">
 								<p className="vintage-body text-muted-foreground text-lg">
-									No businesses found matching your search criteria.
-								</p>
-								<p className="vintage-body text-muted-foreground mt-2">
-									Try adjusting your search terms or category filter.
+									No businesses found.
 								</p>
 							</div>
 						)}

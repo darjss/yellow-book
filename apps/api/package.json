@@ -10,6 +10,9 @@
           "{options.outputPath}"
         ],
         "defaultConfiguration": "production",
+        "dependsOn": [
+          "prisma:generate"
+        ],
         "options": {
           "platform": "node",
           "outputPath": "dist/apps/api",
@@ -17,7 +20,7 @@
             "cjs"
           ],
           "bundle": false,
-          "main": "apps/api/src/main.ts",
+          "main": "src/main.ts",
           "tsConfig": "apps/api/tsconfig.app.json",
           "assets": [
             "apps/api/src/assets"
@@ -75,27 +78,22 @@
         ],
         "executor": "nx:noop"
       },
+      "prisma:generate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "bunx prisma generate --schema=libs/db/prisma/schema.prisma"
+        }
+      },
       "dev": {
         "continuous": true,
-        "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
+        "executor": "nx:run-commands",
         "dependsOn": [
-          "build"
+          "prisma:generate"
         ],
         "options": {
-          "buildTarget": "@yellow-book/api:build",
-          "runBuildTargetDependencies": false,
-          "runtimeArgs": [
-            "--env-file=apps/api/.env"
-          ]
-        },
-        "configurations": {
-          "development": {
-            "buildTarget": "@yellow-book/api:build:development"
-          },
-          "production": {
-            "buildTarget": "@yellow-book/api:build:production"
-          }
+          "command": "bunx tsx --watch src/main.ts",
+          "cwd": "apps/api",
+          "envFile": "apps/api/.env"
         }
       },
       "serve": {

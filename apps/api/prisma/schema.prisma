@@ -1,39 +1,78 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
+
 model Business {
-  id        String   @id @default(uuid())
-  name      String
-  description String
-  address     String
-  phone       String
-  email       String   @unique
-  website     String
+  id           String                 @id @default(uuid())
+  name         String
+  description  String
+  address      String
+  phone        String
+  email        String                 @unique
+  website      String
   googleMapUrl String
-  facebookUrl String
+  facebookUrl  String
   instagramUrl String
   timetable    String
-  category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  categoryId   String
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  embedding    Unsupported("vector")?
+  category     Category               @relation(fields: [categoryId], references: [id])
+
+  @@index([embedding])
 }
 
 model Category {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Business Business[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Business  Business[]
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("user")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  Account       Account[]
+  Session       Session[]
 }

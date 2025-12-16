@@ -8,6 +8,13 @@ import { Phone, MapPin, Globe, Mail, Clock, Facebook, Instagram, Star } from "lu
 import { BusinessDetailSkeleton } from "@/components/business-detail-skeleton";
 import { serverApi } from "@/utils/trpc";
 
+export async function generateStaticParams() {
+    const businesses = await serverApi.getAllBusinesses.query({});
+    return businesses.map((business) => ({
+        id: business.id,
+    }));
+}
+
 const BusinessPage = async ({params}: {params: Promise<{id: string}>}) => {
     const {id} =await params;
     const business = await serverApi.getBusinessById.query({id});

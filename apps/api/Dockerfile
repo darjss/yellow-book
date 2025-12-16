@@ -43,6 +43,9 @@ WORKDIR /app
 # Set NODE_ENV
 ENV NODE_ENV=production
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 # Copy built output
 COPY --from=builder /app/dist/apps/api ./
 COPY --from=prod-deps /app/node_modules ./node_modules
@@ -52,6 +55,10 @@ COPY --from=prod-deps /app/package.json ./package.json
 # If using Accelerate/Data Proxy, ensure DATABASE_URL uses the proxy.
 
 EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
 
 # Start Fastify app
 CMD ["bun", "main.js"]

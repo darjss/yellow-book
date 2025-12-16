@@ -1,18 +1,13 @@
-import { PrismaClient } from "@prisma/client"
-import { withAccelerate } from '@prisma/extension-accelerate'
-import * as path from 'path'
-import dotenv from 'dotenv'
+import { PrismaClient } from '@prisma/client';
 
-// Load environment variables as early as possible so Prisma sees DATABASE_URL
-const envFilePath = process.env.DOTENV_CONFIG_PATH || path.resolve(process.cwd(), 'apps/api/.env')
-dotenv.config({ path: envFilePath })
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-const globalForPrisma = global as unknown as { 
-    prisma: PrismaClient
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
 }
 
-const prisma = globalForPrisma.prisma || new PrismaClient().$extends(withAccelerate())
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-
-export default prisma
+export default prisma;
