@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json bun.lock ./
 COPY apps/web/package.json ./apps/web/package.json
 COPY apps/api/package.json ./apps/api/package.json
+COPY libs/db/package.json ./libs/db/package.json
 COPY libs/config/project.json ./libs/config/project.json
 COPY libs/types/project.json ./libs/types/project.json
 COPY tsconfig.base.json tsconfig.json ./
