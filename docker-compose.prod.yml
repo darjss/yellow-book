@@ -1,0 +1,75 @@
+version: '3.9'
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: '10m'
+    max-file: '3'
+
+services:
+  api:
+    image: ${ECR_REGISTRY}/yellow-book-api:${IMAGE_TAG:-latest}
+    env_file:
+      - .env.prod
+    environment:
+      - PORT=3001
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+    networks:
+      - app
+    restart: unless-stopped
+    logging: *default-logging
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  web:
+    image: ${ECR_REGISTRY}/yellow-book-web:${IMAGE_TAG:-latest}
+    env_file:
+      - .env.prod
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - INTERNAL_BACKEND_URL=http://api:3001
+      - AUTH_TRUST_HOST=true
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - app
+    restart: unless-stopped
+    logging: *default-logging
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    networks:
+      - app
+    restart: unless-stopped
+    logging: *default-logging
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:80']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app:
+    driver: bridge

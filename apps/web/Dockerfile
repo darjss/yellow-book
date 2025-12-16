@@ -23,6 +23,11 @@ COPY apps/web ./apps/web
 
 # 2) Build app (direct Next build, like the self-host example)
 FROM deps AS builder
+WORKDIR /app
+
+# Generate Prisma client
+RUN bunx prisma generate --schema=libs/db/prisma/schema.prisma
+
 WORKDIR /app/apps/web
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN bunx next build
