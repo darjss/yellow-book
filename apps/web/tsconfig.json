@@ -4,6 +4,7 @@
     "jsx": "preserve",
     "noEmit": true,
     "declaration": false,
+    "declarationMap": false,
     "composite": false,
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
