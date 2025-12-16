@@ -32,9 +32,9 @@ RUN bunx nx build @yellow-book/api --configuration=production && \
 ## Production dependencies for API only
 FROM base AS prod-deps
 WORKDIR /app
-COPY apps/api/package.json ./package.json
-RUN bun install --production
-COPY apps/api/prisma ./prisma
+COPY --from=builder /app/dist/apps/api/package.json ./package.json
+RUN bun install --production --ignore-scripts
+COPY libs/db/prisma ./prisma
 RUN bunx prisma generate
 
 ## Runtime stage

@@ -1,185 +1,208 @@
-import type { Business } from "@lib/types";
+import type { Business } from '@lib/types';
 import {
-	Clock,
-	Facebook,
-	Globe,
-	Instagram,
-	Mail,
-	MapPin,
-	Phone,
-	Search,
-} from "lucide-react";
-import Link from "next/link";
-import { Suspense } from "react";
-import { BusinessListSkeleton } from "@/components/business-list-skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { serverApi } from "@/utils/trpc";
+  Clock,
+  Facebook,
+  Globe,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+  Search,
+} from 'lucide-react';
+import Link from 'next/link';
+import { Suspense } from 'react';
+import { BusinessListSkeleton } from '@/components/business-list-skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { serverApi } from '@/utils/trpc';
 
 export const revalidate = 60;
 
 export default async function Index() {
-  
-	const businesses = await serverApi.getAllBusinesses.query({});
+  const businesses = await serverApi.getAllBusinesses.query({});
 
-	return (
-		<div className="min-h-screen w-full bg-background relative">
-			<div className="relative z-10">
-				<header className="border-b-2 border-primary bg-card/80 backdrop-blur-sm">
-					<div className="container mx-auto px-4 py-8">
-						<div className="text-center">
-							<h1 className="vintage-heading text-4xl md:text-6xl text-primary mb-2">
-								BUSINESS DIRECTORY
-							</h1>
-							<p className="vintage-subheading text-lg text-muted-foreground">
-								Your Local Yellow Pages • Est. 1955
-							</p>
-							<div className="w-24 h-1 bg-secondary mx-auto mt-4"></div>
-						</div>
-						<div className="mt-6 flex justify-center">
-							<Link href="/search">
-								<Button
-									variant="outline"
-									className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
-								>
-									<Search className="mr-2 h-4 w-4" />
-									Search Directory
-								</Button>
-							</Link>
-						</div>
-					</div>
-				</header>
+  return (
+    <div className="min-h-screen w-full bg-background relative">
+      <div className="relative z-10">
+        <header className="border-b-2 border-primary bg-card/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="vintage-heading text-4xl md:text-6xl text-primary mb-2">
+                BUSINESS DIRECTORY
+              </h1>
+              <p className="vintage-subheading text-lg text-muted-foreground">
+                Your Local Yellow Pages • Est. 1955
+              </p>
+              <div className="w-24 h-1 bg-secondary mx-auto mt-4"></div>
+            </div>
+            <nav className="mt-6 flex justify-center gap-4 flex-wrap">
+              <Link href="/search">
+                <Button
+                  variant="outline"
+                  className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 border-primary"
+                >
+                  <Search className="mr-2 h-4 w-4" />
+                  Search Directory
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button
+                  variant="outline"
+                  className="vintage-subheading border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  Dashboard
+                </Button>
+              </Link>
+              <Link href="/assistant">
+                <Button
+                  variant="outline"
+                  className="vintage-subheading border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  Assistant
+                </Button>
+              </Link>
+              <Link href="/auth/signin">
+                <Button
+                  variant="outline"
+                  className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        </header>
 
-				<main className="container mx-auto px-4 py-8">
-					<div className="max-w-6xl mx-auto">
-						<div className="mb-6">
-							<p className="vintage-body text-muted-foreground">
-								Showing {businesses.length} businesses
-							</p>
-						</div>
-						<Suspense fallback={<BusinessListSkeleton />}>
-							<div className="grid gap-6">
-								{businesses.map((business: Business) => (
-									<Card
-										key={business.id}
-										className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
-									>
-										<CardContent className="p-6">
-											<div className="flex flex-col lg:flex-row gap-6">
-												<div className="flex-1">
-													<div className="flex items-start justify-between mb-3">
-														<Link href={`/business/${business.id}`}>
-															<h2 className="vintage-heading text-2xl text-primary hover:underline cursor-pointer">
-																{business.name}
-															</h2>
-														</Link>
-														<Badge
-															variant="secondary"
-															className="vintage-body bg-secondary text-secondary-foreground"
-														>
-															{business.category.name}
-														</Badge>
-													</div>
+        <main className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-6">
+              <p className="vintage-body text-muted-foreground">
+                Showing {businesses.length} businesses
+              </p>
+            </div>
+            <Suspense fallback={<BusinessListSkeleton />}>
+              <div className="grid gap-6">
+                {businesses.map((business: Business) => (
+                  <Card
+                    key={business.id}
+                    className="bg-card border-2 border-border shadow-lg hover:shadow-xl transition-shadow"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-3">
+                            <Link href={`/business/${business.id}`}>
+                              <h2 className="vintage-heading text-2xl text-primary hover:underline cursor-pointer">
+                                {business.name}
+                              </h2>
+                            </Link>
+                            <Badge
+                              variant="secondary"
+                              className="vintage-body bg-secondary text-secondary-foreground"
+                            >
+                              {business.category.name}
+                            </Badge>
+                          </div>
 
-													<p className="vintage-body text-foreground mb-4 leading-relaxed">
-														{business.description}
-													</p>
+                          <p className="vintage-body text-foreground mb-4 leading-relaxed">
+                            {business.description}
+                          </p>
 
-													<div className="grid md:grid-cols-2 gap-4">
-														<div className="space-y-3">
-															<div className="flex items-center gap-2">
-																<MapPin className="h-4 w-4 text-accent flex-shrink-0" />
-																<span className="vintage-body text-sm">
-																	{business.address}
-																</span>
-															</div>
-															<div className="flex items-center gap-2">
-																<Phone className="h-4 w-4 text-accent flex-shrink-0" />
-																<span className="vintage-body text-sm font-semibold">
-																	{business.phone}
-																</span>
-															</div>
-															<div className="flex items-center gap-2">
-																<Mail className="h-4 w-4 text-accent flex-shrink-0" />
-																<span className="vintage-body text-sm">
-																	{business.email}
-																</span>
-															</div>
-															<div className="flex items-center gap-2">
-																<Globe className="h-4 w-4 text-accent flex-shrink-0" />
-																<span className="vintage-body text-sm text-primary underline">
-																	{business.website}
-																</span>
-															</div>
-														</div>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm">
+                                  {business.address}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm font-semibold">
+                                  {business.phone}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm">
+                                  {business.email}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Globe className="h-4 w-4 text-accent flex-shrink-0" />
+                                <span className="vintage-body text-sm text-primary underline">
+                                  {business.website}
+                                </span>
+                              </div>
+                            </div>
 
-														<div className="space-y-3">
-															<div className="flex items-start gap-2">
-																<Clock className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
-																<span className="vintage-body text-sm">
-																	{business.timetable}
-																</span>
-															</div>
-															<div className="flex items-center gap-3">
-																{business.facebookUrl && (
-																	<Link href={business.facebookUrl}>
-																		<Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
-																	</Link>
-																)}
-																{business.instagramUrl && (
-																	<Link href={business.instagramUrl}>
-																		<Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
-																	</Link>
-																)}
-																<Link href={business.googleMapUrl}>
-																	<MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
-																</Link>
-															</div>
-														</div>
-													</div>
-												</div>
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-2">
+                                <Clock className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
+                                <span className="vintage-body text-sm">
+                                  {business.timetable}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                {business.facebookUrl && (
+                                  <Link href={business.facebookUrl}>
+                                    <Facebook className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  </Link>
+                                )}
+                                {business.instagramUrl && (
+                                  <Link href={business.instagramUrl}>
+                                    <Instagram className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                  </Link>
+                                )}
+                                <Link href={business.googleMapUrl}>
+                                  <MapPin className="h-4 w-4 text-accent cursor-pointer hover:text-primary" />
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-												<div className="lg:w-48 flex lg:flex-col gap-2">
-													<Link href={`tel:${business.phone}`}>
-														<Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
-															Call Now
-														</Button>
-													</Link>
-													<Link href={business.googleMapUrl}>
-														<Button
-															variant="outline"
-															className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
-														>
-															Get Directions
-														</Button>
-													</Link>
-													<Link href={business.website}>
-														<Button
-															variant="outline"
-															className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
-														>
-															Visit Website
-														</Button>
-													</Link>
-												</div>
-											</div>
-										</CardContent>
-									</Card>
-								))}
-							</div>
-						</Suspense>
+                        <div className="lg:w-48 flex lg:flex-col gap-2">
+                          <Link href={`tel:${business.phone}`}>
+                            <Button className="vintage-subheading bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
+                              Call Now
+                            </Button>
+                          </Link>
+                          <Link href={business.googleMapUrl}>
+                            <Button
+                              variant="outline"
+                              className="vintage-subheading border-accent text-accent hover:bg-accent hover:text-accent-foreground flex-1 bg-transparent"
+                            >
+                              Get Directions
+                            </Button>
+                          </Link>
+                          <Link href={business.website}>
+                            <Button
+                              variant="outline"
+                              className="vintage-subheading border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground flex-1 bg-transparent"
+                            >
+                              Visit Website
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </Suspense>
 
-						{businesses.length === 0 && (
-							<div className="text-center py-12">
-								<p className="vintage-body text-muted-foreground text-lg">
-									No businesses found.
-								</p>
-							</div>
-						)}
-					</div>
-				</main>
-			</div>
-		</div>
-	);
+            {businesses.length === 0 && (
+              <div className="text-center py-12">
+                <p className="vintage-body text-muted-foreground text-lg">
+                  No businesses found.
+                </p>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
 }

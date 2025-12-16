@@ -111,7 +111,7 @@ jobs:
 
       - name: Health check image
         run: |
-          docker run -d --name health-check -p ${{ matrix.port }}:${{ matrix.port }} ${{ env.ECR_REGISTRY }}/${{ matrix.ecr_repo }}:${{ github.sha }}
+          docker run -d --name health-check -p ${{ matrix.port }}:${{ matrix.port }} ${{ env.ECR_REGISTRY }}/${{ matrix.ecr_repo }}:latest
           sleep 10
           if [[ "${{ matrix.app }}" == "api" ]]; then
             curl -f http://localhost:${{ matrix.port }}/health || exit 1
