@@ -3,6 +3,9 @@ import './global.css';
 import { Crimson_Text, Playfair_Display } from 'next/font/google';
 import Providers from './providers';
 
+// Force all pages to be dynamic (no prerendering) - backend not available at build time
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Yellow pages',
   description: 'Find the best businesses in your area',

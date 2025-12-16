@@ -1,28 +1,34 @@
 #!/bin/bash
 # EC2 User Data Script for Yellow Book Application
 # This script runs on first boot to set up the EC2 instance
+# Compatible with Amazon Linux 2023
 
 set -e
 
-# Variables (these will be replaced or set via environment)
+# Variables
 AWS_REGION="ap-southeast-1"
+AWS_ACCOUNT_ID="058264285707"
 APP_DIR="/opt/yellow-book"
 
 # Update system
-yum update -y
+dnf update -y
 
 # Install Docker
-amazon-linux-extras install docker -y
+dnf install -y docker
 systemctl start docker
 systemctl enable docker
 usermod -a -G docker ec2-user
 
-# Install Docker Compose
-curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+# Install Docker Compose plugin
+mkdir -p /usr/local/lib/docker/cli-plugins
+curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" -o /usr/local/lib/docker/cli-plugins/docker-compose
+chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
-# Install AWS CLI (should be pre-installed on Amazon Linux 2)
-yum install -y aws-cli jq
+# Create symlink for docker-compose command
+ln -sf /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
+
+# Install jq (AWS CLI is pre-installed on AL2023)
+dnf install -y jq
 
 # Create application directory
 mkdir -p ${APP_DIR}
