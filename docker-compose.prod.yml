@@ -32,6 +32,7 @@ services:
       - .env.prod
     environment:
       - PORT=3000
+      - HOSTNAME=0.0.0.0
       - NODE_ENV=production
       - INTERNAL_BACKEND_URL=http://api:3001
       - AUTH_TRUST_HOST=true
