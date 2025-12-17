@@ -38,7 +38,10 @@ COPY apps/api/package.prod.json ./package.json
 
 RUN bun install --production
 COPY libs/db/prisma ./prisma
-RUN bunx prisma generate
+
+# Fix the output path for Docker context and generate Prisma client
+RUN sed -i 's|output.*=.*".*"|output = "../node_modules/.prisma/client"|' ./prisma/schema.prisma && \
+    bunx prisma generate --schema=./prisma/schema.prisma
 
 ## Runtime stage
 FROM oven/bun:1-alpine AS runner
