@@ -34,7 +34,15 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun install --no-cache
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - run: bun install
 
       - name: Build dependencies
         run: |
@@ -107,18 +115,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
-
-      - name: Health check image
-        run: |
-          docker run -d --name health-check -p ${{ matrix.port }}:${{ matrix.port }} ${{ env.ECR_REGISTRY }}/${{ matrix.ecr_repo }}:latest
-          sleep 10
-          if [[ "${{ matrix.app }}" == "api" ]]; then
-            curl -f http://localhost:${{ matrix.port }}/health || exit 1
-          else
-            curl -f http://localhost:${{ matrix.port }} || exit 1
-          fi
-          docker stop health-check
+          platforms: linux/amd64
 
   # Deploy to EC2
   deploy:

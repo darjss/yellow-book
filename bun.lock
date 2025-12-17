@@ -60,7 +60,6 @@
       "name": "@yellow-book/api",
       "version": "0.0.1",
       "dependencies": {
-        "@fastify/autoload": "~6.0.3",
         "@fastify/cors": "^11.1.0",
         "@fastify/sensible": "~6.0.2",
         "@prisma/client": "^6.16.2",
