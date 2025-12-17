@@ -156,7 +156,7 @@ jobs:
              chmod +x deploy.sh fetch-secrets.sh && \
              AWS_ACCOUNT_ID='${{ secrets.AWS_ACCOUNT_ID }}' \
              AWS_REGION='${{ env.AWS_REGION }}' \
-             ./deploy.sh '${{ github.sha }}'"
+             ./deploy.sh 'latest'"
 
       - name: Health check
         run: |
