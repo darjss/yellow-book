@@ -154,9 +154,9 @@ jobs:
             ${{ env.EC2_USER }}@${{ env.EC2_HOST }} \
             "cd /opt/yellow-book && \
              chmod +x deploy.sh fetch-secrets.sh && \
-             AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} \
-             AWS_REGION=${{ env.AWS_REGION }} \
-             ./deploy.sh ${{ github.sha }}"
+             AWS_ACCOUNT_ID='${{ secrets.AWS_ACCOUNT_ID }}' \
+             AWS_REGION='${{ env.AWS_REGION }}' \
+             ./deploy.sh '${{ github.sha }}'"
 
       - name: Health check
         run: |
