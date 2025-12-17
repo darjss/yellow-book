@@ -23,6 +23,9 @@ import {
 } from '@/components/ui/dialog';
 import { trpc, queryClient, trpcMutationClient } from '@/utils/trpc';
 
+// Force dynamic rendering to avoid SSG issues with tRPC
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const router = useRouter();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -130,16 +133,17 @@ export default function DashboardPage() {
                     Add Business
                   </Button>
                 </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="vintage-heading text-2xl">
-                    Add New Business
-                  </DialogTitle>
-                  <DialogDescription>
-                    Fill in the details to add a new business to the directory.
-                  </DialogDescription>
-                </DialogHeader>
-                <BusinessForm
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="vintage-heading text-2xl">
+                      Add New Business
+                    </DialogTitle>
+                    <DialogDescription>
+                      Fill in the details to add a new business to the
+                      directory.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <BusinessForm
                     categories={categories}
                     onSubmit={handleCreate}
                     isSubmitting={createMutation.isPending}

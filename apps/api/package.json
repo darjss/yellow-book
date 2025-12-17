@@ -19,17 +19,30 @@
           "format": [
             "cjs"
           ],
-          "bundle": false,
+          "bundle": true,
           "main": "src/main.ts",
           "tsConfig": "apps/api/tsconfig.app.json",
           "assets": [
             "apps/api/src/assets"
           ],
+          "generatePackageJson": true,
           "esbuildOptions": {
             "sourcemap": true,
             "outExtension": {
               ".js": ".js"
-            }
+            },
+            "external": [
+              "@prisma/client",
+              "prisma",
+              "@fastify/*",
+              "fastify",
+              "fastify-plugin",
+              "@trpc/*",
+              "dotenv",
+              "@ai-sdk/*",
+              "ai",
+              "@upstash/*"
+            ]
           }
         },
         "configurations": {
@@ -122,7 +135,6 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@fastify/autoload": "~6.0.3",
     "@fastify/cors": "^11.1.0",
     "@fastify/sensible": "~6.0.2",
     "@prisma/client": "^6.16.2",

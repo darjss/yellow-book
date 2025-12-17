@@ -32,8 +32,30 @@ RUN bunx nx build @yellow-book/api --configuration=production && \
 ## Production dependencies for API only
 FROM base AS prod-deps
 WORKDIR /app
-COPY --from=builder /app/dist/apps/api/package.json ./package.json
-RUN bun install --production --ignore-scripts
+
+# Create minimal package.json for production dependencies
+RUN cat > package.json << 'EOF'
+{
+  "name": "yellow-book-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "@fastify/cors": "^11.1.0",
+    "@fastify/sensible": "^6.0.2",
+    "@trpc/server": "^11.5.1",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.2.1",
+    "fastify-plugin": "^5.0.1",
+    "prisma": "^6.16.2",
+    "zod": "^4.1.11",
+    "@ai-sdk/google": "^2.0.46",
+    "ai": "^5.0.113",
+    "@upstash/redis": "^1.35.8"
+  }
+}
+EOF
+
+RUN bun install --production
 COPY libs/db/prisma ./prisma
 RUN bunx prisma generate
 
@@ -47,13 +69,15 @@ ENV NODE_ENV=production
 # Install curl for health checks
 RUN apk add --no-cache curl
 
-# Copy built output
-COPY --from=builder /app/dist/apps/api ./
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=prod-deps /app/package.json ./package.json
+# Copy built output (bundled main.js)
+COPY --from=builder /app/dist/apps/api/main.js ./main.js
+COPY --from=builder /app/dist/apps/api/package.json ./package.json
 
-# Prisma needs the query engine in production; it is present in node_modules of the builder.
-# If using Accelerate/Data Proxy, ensure DATABASE_URL uses the proxy.
+# Copy plugins and routes for autoload (fastify uses __dirname)
+COPY --from=builder /app/dist/apps/api/src ./src
+
+# Copy node_modules with Prisma client
+COPY --from=prod-deps /app/node_modules ./node_modules
 
 EXPOSE 3001
 

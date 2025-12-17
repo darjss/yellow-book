@@ -101,10 +101,23 @@ export const trpc: TRPCOptionsProxy<AppRouter> =
 // Export the raw tRPC client for mutations
 export const trpcMutationClient = trpcClient;
 
-export const serverApi = createTRPCClient<AppRouter>({
-  links: [
-    httpBatchLink({
-      url: `${getBaseUrl()}/trpc`,
-    }),
-  ],
-});
+export function createServerApi(revalidate?: number | false) {
+  return createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: `${getBaseUrl()}/trpc`,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            next: {
+              revalidate: revalidate ?? 60,
+            },
+          });
+        },
+      }),
+    ],
+  });
+}
+
+// Default server API with 60 second revalidation for ISR
+export const serverApi = createServerApi(60);
