@@ -3,7 +3,8 @@
 set -e
 
 AWS_REGION="${AWS_REGION:-ap-southeast-1}"
-AWS_ACCOUNT_ID="${AWS_ACCOUNT_ID}"
+# Trim whitespace from AWS_ACCOUNT_ID
+AWS_ACCOUNT_ID="$(echo -n "${AWS_ACCOUNT_ID}" | tr -d '[:space:]')"
 ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 APP_DIR="${APP_DIR:-/opt/yellow-book}"
 IMAGE_TAG="${1:-latest}"

@@ -33,27 +33,8 @@ RUN bunx nx build @yellow-book/api --configuration=production && \
 FROM base AS prod-deps
 WORKDIR /app
 
-# Create minimal package.json for production dependencies
-RUN cat > package.json << 'EOF'
-{
-  "name": "yellow-book-api",
-  "version": "1.0.0",
-  "dependencies": {
-    "@prisma/client": "^6.16.2",
-    "@fastify/cors": "^11.1.0",
-    "@fastify/sensible": "^6.0.2",
-    "@trpc/server": "^11.5.1",
-    "dotenv": "^17.2.3",
-    "fastify": "^5.2.1",
-    "fastify-plugin": "^5.0.1",
-    "prisma": "^6.16.2",
-    "zod": "^4.1.11",
-    "@ai-sdk/google": "^2.0.46",
-    "ai": "^5.0.113",
-    "@upstash/redis": "^1.35.8"
-  }
-}
-EOF
+# Copy production dependencies file (cached unless this file changes)
+COPY apps/api/package.prod.json ./package.json
 
 RUN bun install --production
 COPY libs/db/prisma ./prisma
