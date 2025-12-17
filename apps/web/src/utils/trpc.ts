@@ -47,10 +47,11 @@ export const queryClient = new QueryClient({
 });
 
 function getBaseUrl() {
-  if (process.env.NEXT_PUBLIC_BACKEND_URL)
-    return process.env.NEXT_PUBLIC_BACKEND_URL;
-  if (typeof window !== 'undefined') return '';
-  // SSR: use internal Docker service name by default; override with env if set
+  if (typeof window !== 'undefined') {
+    // Browser: use public URL or relative path
+    return process.env.NEXT_PUBLIC_BACKEND_URL || '';
+  }
+  // Server: use internal Docker service name
   return process.env.INTERNAL_BACKEND_URL || 'http://api:3001';
 }
 
